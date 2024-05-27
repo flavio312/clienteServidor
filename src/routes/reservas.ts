@@ -1,17 +1,18 @@
 import { Router } from 'express';
-import { Reserva } from '../models/Reserva';
+import Reserva from '../models/Reserva';
 
 const router = Router();
-let reservas: Reserva[] = [];
 
 // Short Polling: simplemente consulta normal
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+  const reservas = await Reserva.findAll();
   res.json(reservas);
 });
 
 // Long Polling
 router.get('/long-polling', (req, res) => {
-  const checkForUpdates = () => {
+  const checkForUpdates = async () => {
+    const reservas = await Reserva.findAll();
     if (reservas.length > 0) {
       res.json(reservas);
     } else {
@@ -22,10 +23,8 @@ router.get('/long-polling', (req, res) => {
   checkForUpdates();
 });
 
-router.post('/', (req, res) => {
-  const reserva: Reserva = req.body;
-  reserva.idReserva = reservas.length + 1;
-  reservas.push(reserva);
+router.post('/', async (req, res) => {
+  const reserva = await Reserva.create(req.body);
   res.status(201).json(reserva);
 });
 

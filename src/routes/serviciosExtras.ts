@@ -1,17 +1,15 @@
 import { Router } from 'express';
-import { ServicioExtra } from '../models/ServicioExtra';
+import ServicioExtra from '../models/ServicioExtra';
 
 const router = Router();
-let serviciosExtras: ServicioExtra[] = [];
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+  const serviciosExtras = await ServicioExtra.findAll();
   res.json(serviciosExtras);
 });
 
-router.post('/', (req, res) => {
-  const servicioExtra: ServicioExtra = req.body;
-  servicioExtra.idServicio = serviciosExtras.length + 1;
-  serviciosExtras.push(servicioExtra);
+router.post('/', async (req, res) => {
+  const servicioExtra = await ServicioExtra.create(req.body);
   res.status(201).json(servicioExtra);
 });
 

@@ -1,17 +1,15 @@
 import { Router } from 'express';
-import { Pago } from '../models/Pago';
+import Pago from '../models/Pago';
 
 const router = Router();
-let pagos: Pago[] = [];
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+  const pagos = await Pago.findAll();
   res.json(pagos);
 });
 
-router.post('/', (req, res) => {
-  const pago: Pago = req.body;
-  pago.idPago = pagos.length + 1;
-  pagos.push(pago);
+router.post('/', async (req, res) => {
+  const pago = await Pago.create(req.body);
   res.status(201).json(pago);
 });
 
